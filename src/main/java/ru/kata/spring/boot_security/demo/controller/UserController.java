@@ -17,19 +17,20 @@ public class UserController {
     private final UserServiceImp userService;
 
     @GetMapping("/admin")
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, Authentication authentication) {
+        model.addAttribute("admin", userService.getUserByEmail(authentication.getName()));
         model.addAttribute("users", userService.findAllUsers());
         return "admin";
     }
 
     @GetMapping("/admin/new")
-    public String newUser(@ModelAttribute("user") User user) {
+    public String newUser(@ModelAttribute("user") User user, Model model, Authentication authentication) {
+        model.addAttribute("admin", userService.getUserByEmail(authentication.getName()));
         return "new";
     }
 
     @PostMapping("/admin")
-    public String addNewUser(@ModelAttribute User user,
-                             @RequestParam(required = false) String[] role) {
+    public String addNewUser(@ModelAttribute User user, @RequestParam(required = false) String[] role) {
         userService.saveUser(user);
         if (role != null) {
             for (String r : role) {
@@ -47,13 +48,13 @@ public class UserController {
         return "edit";
     }
 
-    @PatchMapping("/admin/{id}")
-    public String updateUser(@ModelAttribute User user,
-                             @RequestParam(required = false) String[] role) {
-        userService.updateUser(user);
+    @PatchMapping("/admin")
+    public String updateUser(@ModelAttribute User user, @RequestParam(required = false) String[] role, @RequestParam(required = false) String password) {
+
+        userService.updateUser(user, password);
         if (role != null) {
-            for (String rl: role) {
-                userService.setUserRole(user.getEmail(), rl);
+            for (String r : role) {
+                userService.setUserRole(user.getEmail(), r);
             }
         }
         return "redirect:/admin";

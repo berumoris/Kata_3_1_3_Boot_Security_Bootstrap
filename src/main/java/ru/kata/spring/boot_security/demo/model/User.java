@@ -38,11 +38,12 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "enabled")
-    private boolean enabled;
-
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles = new HashSet<>();
+
+    public boolean containsRole(String role) {
+        return roles.stream().filter(x -> x.getNameRole().equals(role)).count() > 0;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -56,17 +57,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return enabled;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return enabled;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return enabled;
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
 }

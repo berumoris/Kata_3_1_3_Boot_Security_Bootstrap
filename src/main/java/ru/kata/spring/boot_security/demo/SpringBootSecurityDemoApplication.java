@@ -31,8 +31,8 @@ public class SpringBootSecurityDemoApplication {
 			roleService.createRole(new Role(null, "ROLE_USER"));
 			roleService.createRole(new Role(null, "ROLE_ADMIN"));
 
-			userService.saveUser(new User(null, "Admin", "Adminov", (byte) 33, "admin@mail.ru", "admin", true, new HashSet<>()));
-			userService.saveUser(new User(null, "User", "Userov", (byte) 21, "user@ya.ru", "user", true, new HashSet<>()));
+			userService.saveUser(new User(null, "Admin", "Adminov", (byte) 33, "admin@mail.ru", "admin", new HashSet<>()));
+			userService.saveUser(new User(null, "User", "Userov", (byte) 21, "user@ya.ru", "user", new HashSet<>()));
 
 			userService.setUserRole("admin@mail.ru", "ROLE_ADMIN");
 			userService.setUserRole("admin@mail.ru", "ROLE_USER");

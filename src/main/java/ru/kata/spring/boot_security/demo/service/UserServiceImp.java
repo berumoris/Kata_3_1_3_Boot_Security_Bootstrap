@@ -58,28 +58,13 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public void updateUser(User user) {
-        User userWillBeUpdate = userRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalStateException("User " + user.getId() + " not found"));
-        if (!userWillBeUpdate.getEmail().equals(user.getEmail())) {
-            userWillBeUpdate.setEmail(user.getEmail());
+    public void updateUser(User user, String password) {
+        if (password.equals("")) {
+            user.setPassword(userRepository.findByEmail(user.getEmail()).getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(password));
         }
-        if (!userWillBeUpdate.getName().equals(user.getName())) {
-            userWillBeUpdate.setName(user.getName());
-        }
-        if (!userWillBeUpdate.getLastName().equals(user.getLastName())) {
-            userWillBeUpdate.setLastName(user.getLastName());
-        }
-        if (!(userWillBeUpdate.getAge() == user.getAge())) {
-            userWillBeUpdate.setAge(user.getAge());
-        }
-        if (!userWillBeUpdate.getPassword().equals(user.getPassword())) {
-            userWillBeUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-        if (userWillBeUpdate.isEnabled() != user.isEnabled()) {
-            userWillBeUpdate.setEnabled(user.isEnabled());
-        }
-        userWillBeUpdate.setRoles(new HashSet<Role>());
+        userRepository.save(user);
     }
 
     @Override
@@ -97,10 +82,6 @@ public class UserServiceImp implements UserService, UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),
-                user.isEnabled(),
-                user.isEnabled(),
-                user.isEnabled(),
-                user.isEnabled(),
                 user.getAuthorities());
     }
 }
